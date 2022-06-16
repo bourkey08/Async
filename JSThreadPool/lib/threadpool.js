@@ -24,11 +24,12 @@ class ThreadPool {
     //Private variable for storing config info passed to the class constructor
     #Config;
 
-    constructor(MinWorkers=1, MaxWorkers=null, IdleTimeOut=60){
+    constructor(MinWorkers=1, MaxWorkers=null, IdleTimeOut=60, WorkerPath='libs/threadpool.worker.js'){
         this.#Config = {
             'MinWorkers': MinWorkers,
             'MaxWorkers': MaxWorkers === null ? navigator.hardwareConcurrency : MaxWorkers,
-            'IdleTimeOut': IdleTimeOut
+            'IdleTimeOut': IdleTimeOut,
+            'WorkerPath': WorkerPath
         }
 
         //Start the minimum number of workers immediatly
@@ -43,7 +44,7 @@ class ThreadPool {
     //Starts a new web worker
     async #StartWorker(){
         const NewWorker = {
-            'Worker':  new Worker('threadpool.worker.js'),
+            'Worker':  new Worker(this.#Config['WorkerPath']),
             'LastActive': (new Date).getTime(),
             'IsIdle': false//Defualt to false, will be set to true once the worker posts a message indicating that it is ready for use
         };
