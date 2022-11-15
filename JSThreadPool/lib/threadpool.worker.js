@@ -42,13 +42,13 @@ this.onmessage = async (msg) => {
             const Funct = await GetFunction(msg['data']['funct']);
 
             //Now call the function with the specified arguments and return the result
-            const Result = await Funct(...JSON.parse(msg['data']['args']));
+            const Result = await Funct(...msg['data']['args']);
 
             //Now post the result back to the main thread
             this.postMessage({
                 'Type': 'Result',
                 'ID': msg['data']['ID'],
-                'Result': JSON.stringify(Result)
+                'Result': Result
             })            
 
             break;

@@ -166,7 +166,7 @@ class ThreadPool {
                 AllocatedWorker['Worker'].postMessage({
                     'Type': 'Job',
                     'funct': FunctID,
-                    'args': JSON.stringify(args),
+                    'args': args,
                     'ID': JobID
                 });
 
