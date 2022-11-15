@@ -173,7 +173,7 @@ class ThreadPool {
             //Otherwise there is no worker available to process the request immediatly, add the request into the queue
             } else {
                 //Add the job to the queue
-                this.#TaskQueue['Queue'].push({'FunctionID': FunctID, 'JobID': JobID, 'args': JSON.stringify(args)});
+                this.#TaskQueue['Queue'].push({'FunctionID': FunctID, 'JobID': JobID, 'args': args});
             }
 
             //Now await the callback resolving and return its output
