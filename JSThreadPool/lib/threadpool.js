@@ -144,7 +144,7 @@ class ThreadPool {
         let IsDisposed = false;
 
         //Define the funcion we will return, When this function is called it will execute the function specified by funct in a worker and then resolv with the results
-        const WrappedFunct = async (...args) => {
+        const WrappedFunct = (async (...args) => {
             //If ths function has been disposed of, raise and exception as its not able to be called as the code behind the wraped function is no longer available
             if (IsDisposed){
                 throw "Attempted to call disposed function";
@@ -178,7 +178,7 @@ class ThreadPool {
 
             //Now await the callback resolving and return its output
             return await JobPromise;
-        }
+        }).bind(this);
 
         //Add a function to the wrapped function to mark the function as disposed, this will remove it from any running web workers as well as the main function store
         WrappedFunct.dispose = () => {
