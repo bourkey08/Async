@@ -54,12 +54,20 @@ class ThreadPool {
 
         //Called when a message is received from the web worker
         NewWorker['Worker'].onmessage = (msg) => {
+            //Unpack the json data
+            let msg_data = {};
+            if (typeof msg.data === 'string'){
+                msg_data = JSON.parse(msg.data);
+            } else {
+                msg_data = msg.data;
+            }
+
             //Set the last activet time of this worker to be now as we have just received a message from it
             NewWorker['LastActive'] = (new Date).getTime();
 
-            switch (msg['data']['Type']){
+            switch (msg_data.Type){
                 case ('Status'):
-                    if (msg['data']['Status'] === 'ready'){
+                    if (msg_data.Status === 'ready'){
                         //Call function to either get the next queued job or mark the worker as idle
                         this.#WorkerBecameIdle(NewWorker);
 
@@ -72,14 +80,14 @@ class ThreadPool {
                 case ('ReqFunct'):
                     NewWorker['Worker'].postMessage({
                         'Type': 'Function',
-                        'ID': msg['data']['ID'],
-                        'Function': this.#Functions[msg['data']['ID']]
+                        'ID': msg_data.ID,
+                        'Function': this.#Functions[msg_data.ID]
                     });
                     break;
 
                 //Worker has responded with the result of a job, we need to resolv the promise for the job and mark the worker as idle
                 case ('Result'):
-                    this.#TaskQueue.Callbacks[msg['data']['ID']](JSON.parse(msg['data']['Result']))
+                    this.#TaskQueue.Callbacks[msg_data.ID](msg_data.Result)
                     
                     //Call function to either get the next queued job or mark the worker as idle
                     this.#WorkerBecameIdle(NewWorker);
@@ -178,6 +186,7 @@ class ThreadPool {
 
             //Now await the callback resolving and return its output
             return await JobPromise;
+
         }).bind(this);
 
         //Add a function to the wrapped function to mark the function as disposed, this will remove it from any running web workers as well as the main function store

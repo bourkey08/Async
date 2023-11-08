@@ -45,12 +45,11 @@ this.onmessage = async (msg) => {
             const Result = await Funct(...msg['data']['args']);
 
             //Now post the result back to the main thread
-            this.postMessage({
+            this.postMessage(JSON.stringify({
                 'Type': 'Result',
                 'ID': msg['data']['ID'],
                 'Result': Result
-            })            
-
+            }));
             break;
 
         //The main thread has responded to our request for a function
